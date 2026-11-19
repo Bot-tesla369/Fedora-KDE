@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fedora-kde",
+  "version": "2.0.0",
+  "description": "Administrar, diagnosticar y personalizar Fedora KDE con detección local del entorno, compatibilidad comprobada y cambios verificables.",
+  "author": {
+    "name": "Nikola"
+  },
+  "keywords": [
+    "fedora",
+    "kde",
+    "plasma",
+    "wayland",
+    "konsole",
+    "diagnostico",
+    "compatibilidad",
+    "rendimiento"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Fedora-KDE",
+        "shortDescription": "Fedora y Plasma con evidencia",
+        "longDescription": "Diagnóstico, compatibilidad, administración, seguridad, rendimiento y personalización de Fedora KDE. Detecta el entorno local cuando hace falta y valida cada cambio.",
+        "defaultPrompt": "Resuelve mi solicitud de Fedora KDE: consulta solo el contexto local necesario, comprueba compatibilidad y aplica el cambio mínimo con validación y reversión.",
+        "developerName": "Nikola",
+        "category": "Productivity",
+        "capabilities": []
+      }
+    }
+  }
+}
