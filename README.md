@@ -1,41 +1,59 @@
 # Fedora-KDE
 
-Plugin en español para administrar, diagnosticar y personalizar Fedora con KDE Plasma. Reúne las capacidades de Edward-Fedora y Edward-KDE en un paquete público, sin perfiles de hardware ni configuraciones de un usuario concreto.
+An English-language plugin for administering, diagnosing, and customizing Fedora with KDE Plasma. It combines Edward-Fedora and Edward-KDE capabilities in a public package without hardware profiles or personal user settings.
 
-## 1. Objetivo
+## 1. Objective
 
-Resolver problemas de compatibilidad, estabilidad, rendimiento y uso del escritorio mediante evidencia del sistema actual. Codex consulta el entorno cuando lo necesita, propone o aplica el cambio pertinente y comprueba el resultado.
+Resolve compatibility, stability, performance, and desktop usability issues using evidence from the current system. The agent inspects the environment when necessary, proposes or applies the relevant change, and verifies the result.
 
-## 2. Funcionalidades
+## 2. Features
 
-| Skill | Responsabilidad |
+| Skill | Responsibility |
 | --- | --- |
-| `fedora-diagnostico` | Fallos de inicio, servicios, dispositivos, red, audio y permisos. |
-| `fedora-operaciones` | RPM/DNF, Flatpak, repositorios, actualizaciones y firmware; distingue Fedora tradicional y Kinoite/OSTree. |
-| `fedora-seguridad-rendimiento` | Mediciones, recursos, arranque, batería, temperatura, SELinux y firewall. |
-| `kde-escritorio` | Paneles, widgets, temas, colores, fuentes, atajos y apariencia. |
-| `kde-terminales` | Konsole, perfiles, shell, prompt, Fastfetch, ASCII e imágenes compatibles. |
-| `kde-wayland-diagnostico` | Plasma/KWin, sensores de widgets, escalado, monitores y fallos de escritorio. |
+| `fedora-diagnostico` | Boot, services, devices, networking, audio, and permissions. |
+| `fedora-operaciones` | RPM/DNF, Flatpak, repositories, updates, and firmware; distinguishes traditional Fedora from Kinoite/OSTree. |
+| `fedora-seguridad-rendimiento` | Measurements, resources, boot, battery, temperature, SELinux, and firewall. |
+| `kde-escritorio` | Panels, widgets, themes, colors, fonts, shortcuts, and appearance. |
+| `kde-terminales` | Konsole, profiles, shells, prompts, Fastfetch, ASCII art, and supported images. |
+| `kde-wayland-diagnostico` | Plasma/KWin, widget sensors, scaling, monitors, and desktop failures. |
 
-Las skills comparten un [protocolo de contexto, compatibilidad y privacidad](skills/fedora-diagnostico/references/contexto-y-fuentes.md). Conservan sus identificadores para facilitar la migración y se remiten unas a otras dentro de este plugin.
+All skills share a [context, compatibility, and privacy protocol](skills/fedora-diagnostico/references/contexto-y-fuentes.md). Existing identifiers and paths are retained for compatibility; all instructions and output messages are in English. Responses default to English unless the user requests another language.
 
-## 3. Requisitos
+## 3. Requirements
 
-Codex u otro agente compatible con skills y acceso a sus archivos. Para consultas automáticas necesita una herramienta shell conectada al equipo afectado; el plugin no aporta acceso remoto ni una conexión privilegiada. Sin esa herramienta, entrega comandos para ejecutar localmente.
+Codex or another skills-compatible agent with access to the plugin files. Automated system queries need a shell tool connected to the affected machine; the plugin provides neither remote access nor privileged access. Without a shell, it provides commands to run locally.
 
-El script opcional requiere Bash y herramientas habituales de Fedora; `timeout` limita cada consulta. Detecta herramientas ausentes sin instalarlas. Las pruebas del paquete requieren Bash y Python 3, y usan comandos simulados para evitar inspeccionar servicios o hardware reales. Las consultas web necesitan navegación disponible.
+The optional script requires Bash and common Fedora tools. It uses `timeout` to bound queries and reports missing tools without installing them. Package checks require Bash and Python 3 and simulate commands instead of inspecting real services or hardware. Web research requires browsing access.
 
-## 4. Instalación y uso
+## 4. Installation and usage
 
-Registra esta carpeta como plugin local o incorpora su repositorio al marketplace que utilice tu cliente. La identidad nueva es **`fedora-kde`**, versión **2.0.0**. No es una actualización automática de los identificadores `edward-fedora` y `edward-kde`: instala este paquete, comprueba que aparecen las seis skills y después retira los anteriores desde la gestión de plugins para evitar activaciones duplicadas.
+The plugin identity is **`fedora-kde`**, version **2.0.1**. It does not automatically replace `edward-fedora` or `edward-kde`: install this package, verify that its six skills appear, and then remove the old plugins through plugin management if no longer needed.
 
-Ejemplos:
+### Add from GitHub without a password
 
-- «Este error apareció después de actualizar Fedora KDE; investiga la causa y corrígelo».
-- «Mide por qué Plasma consume tanta memoria antes de cambiar configuraciones».
-- «Configura Konsole y un indicador de temperatura compatible con mi versión de Plasma».
+In **Add plugin marketplace**, use either:
 
-Para inspección manual, desde la raíz del plugin:
+- Repository shorthand: `Bot-tesla369/Fedora-KDE` (no `.git` suffix).
+- Full clone URL: `https://github.com/Bot-tesla369/Fedora-KDE.git`.
+
+Set the Git reference to `main` and leave sparse paths empty. Do not enter `Bot-tesla369/Fedora-KDE.git` as shorthand: the tested client appends `.git`, producing `Fedora-KDE.git.git` and a GitHub credential prompt. Cancel that prompt and correct the source. This public repository needs no GitHub credentials for cloning. Plugin authentication policy does not control Git clone authentication.
+
+CLI equivalent:
+
+```bash
+codex plugin marketplace add https://github.com/Bot-tesla369/Fedora-KDE.git --ref main
+codex plugin add fedora-kde@fedora-kde-marketplace
+```
+
+For local installation, add the checked-out repository folder as the marketplace source. The catalog is at `.agents/plugins/marketplace.json`; its `./` source resolves to the repository root. The native Codex manifest is `.codex-plugin/plugin.json`, with an Agent Plugins 1.0 manifest at `plugin.json`.
+
+Example requests:
+
+- “This error appeared after updating Fedora KDE; investigate and fix it.”
+- “Measure why Plasma uses so much memory before changing settings.”
+- “Configure Konsole and a temperature indicator compatible with my Plasma version.”
+
+For manual inspection from the plugin root:
 
 ```bash
 bash src/fedora-diagnostico.sh --help
@@ -43,45 +61,44 @@ bash src/fedora-diagnostico.sh
 bash src/fedora-diagnostico.sh --section graphics
 ```
 
-Otras secciones: `resources`, `security` y `all`. Cada sección incluye contexto base. El script solo consulta datos locales y escribe en la salida estándar: no usa red, sudo, instaladores ni crea informes. No recoge logs ni busca hostname, IP, MAC, UUID o números de serie; versiones y modelos consultados siguen siendo información técnica del equipo. Revisa cualquier salida antes de compartirla. Código 1 significa informe parcial, no necesariamente avería; 0 tampoco significa ausencia de fallos.
+Other sections are `resources`, `security`, and `all`; each includes base context. The script only reads local data and prints to standard output. It uses no network, sudo, installers, or report files. It does not collect logs or deliberately query hostnames, IP/MAC addresses, UUIDs, or serial numbers. Versions and hardware models remain technical device information; review output before sharing it. Exit 1 means a partial report, not necessarily a fault; exit 0 does not certify a healthy system.
 
-## 5. Arquitectura
+## 5. Architecture
 
 ```txt
-[Petición y síntoma]
+[Request and symptom]
         ↓
-[Skill principal + protocolo compartido]
+[Primary skill and shared protocol]
         ↓
-[Contexto local mínimo y versión/edición/sesión verificadas]
+[Minimum context: host, edition, version, session]
         ↓
-[Evidencia y documentación aplicable]
-        ├── Incompleta → [Consulta dirigida y revisión de hipótesis]
-        └── Suficiente → [Cambio dentro del alcance autorizado]
+[Evidence and applicable documentation]
+        ├── Incomplete → [Targeted query and revised hypothesis]
+        └── Sufficient → [Change within authorized scope]
                                   ↓
-                          [Prueba funcional]
-                            ├── Falla → [Reversión y nueva hipótesis]
-                            └── Pasa  → [Resultado y recuperación documentada]
+                          [Functional verification]
+                            ├── Fails  → [Rollback and new hypothesis]
+                            └── Passes → [Document result and recovery]
 ```
 
-Fedora tradicional y Kinoite tienen rutas de administración distintas. Una sesión SSH, Toolbx o un contenedor no demuestra el estado del escritorio del host. Las versiones se consultan, no se fijan en el paquete.
+Traditional Fedora and Kinoite require different administration paths. An SSH session, Toolbx, or container does not establish the state of the host desktop. Versions are queried rather than fixed in the package.
 
-## 6. Fuentes, privacidad y límites
+## 6. Sources, privacy, and limitations
 
-El protocolo enlaza [Fedora KDE SIG](https://fedoraproject.org/wiki/KDE), [Fedora Docs](https://docs.fedoraproject.org/), [Kinoite](https://docs.fedoraproject.org/en-US/fedora-kinoite/), [manuales de KDE](https://docs.kde.org/) y [Konsole](https://docs.kde.org/stable_kf6/en/konsole/konsole/index.html). Codex debe contrastar la versión instalada con la documentación; un enlace no garantiza compatibilidad y algunas páginas pueden bloquear clientes automáticos.
+The protocol links to [Fedora KDE SIG](https://fedoraproject.org/wiki/KDE), [Fedora Docs](https://docs.fedoraproject.org/), [Kinoite](https://docs.fedoraproject.org/en-US/fedora-kinoite/), [KDE manuals](https://docs.kde.org/), and [Konsole](https://docs.kde.org/stable_kf6/en/konsole/konsole/index.html). Match documentation to the installed version; a link does not establish compatibility, and some pages block automated clients.
 
-No se publican resultados del equipo, logs, secretos ni copias de configuraciones personales. Guarda los informes y respaldos fuera del plugin. `.gitignore` reduce inclusiones accidentales; revisa los archivos preparados para el commit, incluidos los ya rastreados.
+Do not publish machine output, logs, secrets, or personal configuration backups. Keep reports and backups outside the plugin. `.gitignore` reduces accidental additions but does not remove tracked files; review staged changes before committing.
 
-No se aplican ajustes universales, reinicios ni actualizaciones masivas por rutina. Arranque, discos y firmware requieren evaluación específica. El paquete no certifica seguridad ni sustituye una prueba en el sistema real. La edición de esta carpeta no modifica instalaciones ya almacenadas en caché ni desinstala los plugins anteriores.
+Do not apply universal tuning, restarts, or bulk updates as routine maintenance. Boot, storage, and firmware need a specific assessment. This package does not certify security or replace real-system verification. Editing this folder does not update cached installations or uninstall previous plugins.
 
-## 7. Índice y comprobación
+## 7. File index and checks
 
 ```txt
 Fedora-KDE/
 ├── README.md
 ├── plugin.json
-├── .agents/
-│   └── plugins/
-│       └── marketplace.json
+├── .codex-plugin/plugin.json
+├── .agents/plugins/marketplace.json
 ├── skills/
 │   ├── fedora-diagnostico/
 │   │   ├── SKILL.md
@@ -97,4 +114,4 @@ Fedora-KDE/
     └── test_plugin.py
 ```
 
-Ejecuta `bash tests/test-plugin.sh` para validar sintaxis, metadatos, enlaces internos y comportamiento del script con herramientas simuladas, ausencias y fallos de consulta. Estas pruebas no equivalen a instalar el plugin ni comprobar cada función sobre hardware real.
+Run `bash tests/test-plugin.sh` to check syntax, metadata, catalog paths, internal links, and script behavior with simulated commands, missing tools, and query failures. These checks do not substitute for host installation or testing every function on real hardware.

@@ -1,24 +1,24 @@
 ---
 name: fedora-seguridad-rendimiento
-description: "Evaluar y mejorar seguridad o rendimiento de Fedora KDE: CPU, RAM, swap/zRAM, almacenamiento, arranque, temperatura, batería, servicios, SELinux y firewalld. Usar para problemas medibles u optimización solicitada, sin recetas universales."
+description: "Assess and improve Fedora KDE security or performance: CPU, RAM, swap/zRAM, storage, boot, temperature, battery, services, SELinux, and firewalld. Use for measurable issues or requested optimization without universal tuning recipes."
 ---
 
-# Seguridad y rendimiento de Fedora KDE
+# Fedora KDE security and performance
 
-## Objetivo y entradas
+## Objective and inputs
 
-Mejorar una métrica o resolver una exposición concreta sin degradar funciones ni protecciones. Define carga de trabajo, síntoma y objetivo: latencia, memoria, arranque, temperatura, autonomía o regla de acceso.
+Improve a metric or resolve a specific exposure without degrading functionality or protections. Define the workload, symptom, and objective: latency, memory, boot, temperature, battery life, or an access rule.
 
-## Procedimiento
+## Procedure
 
-1. Lee el [protocolo compartido](../fedora-diagnostico/references/contexto-y-fuentes.md). Obtén solo el contexto necesario y una línea base. El script permite `--section resources` o `--section security`; estas secciones no certifican el estado del sistema.
-2. Elige métricas relacionadas con el síntoma: `free -h`, `swapon --show`, `zramctl` si existe, `df -h /`, `findmnt -n -o FSTYPE /`, `systemd-analyze time` o `systemd-analyze blame`. En el arranque distingue duración de una unidad de su contribución a la ruta crítica; un servicio lento no es necesariamente prescindible. Usa un monitor de procesos disponible sin volcar argumentos que puedan contener secretos.
-3. Temperatura: consulta `sensors` solo si existe, identifica el sensor y la carga medida; no ejecutes `sensors-detect` como inspección inocua. Distingue temperatura de CPU, GPU y batería. No fijes un umbral universal sin documentación del hardware. Para un indicador en panel, continúa con [kde-wayland-diagnostico](../kde-wayland-diagnostico/SKILL.md).
-4. Energía: comprueba batería/corriente y gestor de perfiles realmente activo antes de cambiarlo. No combines TLP, tuned u otros gestores sin verificar cómo interactúan en esa versión. Mantén comparables brillo, carga, perfil y alimentación al medir autonomía o temperatura.
-5. Seguridad: consulta `getenforce` y el estado de firewalld cuando sean pertinentes. Investiga una denegación SELinux o regla concreta antes de intervenir; no desactives SELinux ni el firewall para mejorar rendimiento o probar por rutina. No abras puertos ni permisos fuera del objetivo. Evita generar políticas automáticamente a partir de todos los eventos.
-6. Distingue caché de presión de memoria, swap de disco de zRAM y espacio aparente de uso real Btrfs. No hagas balance, borrado de snapshots, sysctl, cambios de scheduler, parámetros de kernel o desactivación de servicios como optimización general.
-7. Relaciona evidencia y cuello de botella. Aplica un cambio reversible por vez, conserva el estado previo y repite la prueba en condiciones comparables. Si no mejora o rompe funciones, revierte y registra el resultado. Si no hay evidencia de un problema, dilo y evita modificar el equipo.
+1. Read the [shared protocol](../fedora-diagnostico/references/contexto-y-fuentes.md). Gather only the necessary context and a baseline. The script supports `--section resources` and `--section security`; neither section certifies system health.
+2. Choose symptom-related measurements: `free -h`, `swapon --show`, `zramctl` if available, `df -h /`, `findmnt -n -o FSTYPE /`, `systemd-analyze time`, or `systemd-analyze blame`. Distinguish a unit's duration from its contribution to the boot critical path; a slow service is not necessarily expendable. Use an available process monitor without dumping arguments that may contain secrets.
+3. For temperature, query `sensors` only if available and identify the sensor and measured workload. Do not treat `sensors-detect` as harmless inspection. Distinguish CPU, GPU, and battery temperatures. Do not impose a universal threshold without hardware documentation. For a panel indicator, continue with [kde-wayland-diagnostico](../kde-wayland-diagnostico/SKILL.md).
+4. For power, check battery/AC status and the active profile manager before changing it. Do not combine TLP, tuned, or other managers without checking their interaction in that version. Keep brightness, workload, profile, and power source comparable when measuring battery life or temperature.
+5. For security, inspect `getenforce` and firewalld status when relevant. Investigate a specific SELinux denial or rule before acting; do not disable SELinux or the firewall for performance or routine testing. Do not open ports or permissions outside the objective. Avoid automatically generating policies from all events.
+6. Distinguish cache from memory pressure, disk swap from zRAM, and apparent space from actual Btrfs usage. Do not balance filesystems, delete snapshots, tune sysctl or schedulers, change kernel parameters, or disable services as general optimization.
+7. Connect the evidence to a bottleneck. Apply one reversible change at a time, preserve the previous state, and repeat the test under comparable conditions. If it does not help or breaks functionality, revert and record the result. If there is no evidence of a problem, say so and avoid modifying the machine.
 
-## Salida y límites
+## Output and limitations
 
-Entrega métrica inicial, causa o hipótesis, intervención concreta, comparación antes/después y reversión. No prometas mejoras porcentuales ni interpretes RAM libre, CPU libre o ausencia de logs como objetivo de optimización. Separa hallazgos de seguridad de mejoras de rendimiento.
+Provide the baseline, cause or hypothesis, specific intervention, before/after comparison, and rollback. Do not promise percentage improvements or treat free RAM, idle CPU, or absence of logs as an optimization target. Separate security findings from performance improvements.

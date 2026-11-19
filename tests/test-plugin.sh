@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pruebas locales del paquete con consultas simuladas y archivos temporales.
+# Local package checks using simulated queries and temporary files.
 set -euo pipefail
 plugin_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 bash -n "$plugin_root/src/fedora-diagnostico.sh"

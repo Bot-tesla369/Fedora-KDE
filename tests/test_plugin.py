@@ -33,6 +33,20 @@ class PackageTests(unittest.TestCase):
         self.assertNotIn('email', host['author'])
         self.assertEqual({p.parent.name for p in (ROOT / 'skills').glob('*/SKILL.md')}, SKILLS)
 
+    def test_marketplace_resolves_native_plugin_at_repository_root(self):
+        catalogs = list(ROOT.rglob('marketplace.json'))
+        self.assertEqual(catalogs, [ROOT / '.agents/plugins/marketplace.json'])
+        catalog = json.loads(catalogs[0].read_text())
+        self.assertEqual(catalog['name'], 'fedora-kde-marketplace')
+        self.assertEqual(len(catalog['plugins']), 1)
+        entry = catalog['plugins'][0]
+        self.assertEqual(entry['name'], 'fedora-kde')
+        self.assertEqual(entry['source']['source'], 'local')
+        self.assertEqual((ROOT / entry['source']['path']).resolve(), ROOT)
+        self.assertTrue((ROOT / '.codex-plugin/plugin.json').is_file())
+        self.assertEqual(entry['policy']['installation'], 'AVAILABLE')
+        self.assertEqual(entry['policy']['authentication'], 'ON_INSTALL')
+
     def test_skills_and_shared_protocol_are_reachable(self):
         for path in ROOT.rglob('*.md'):
             text = path.read_text()
@@ -109,8 +123,8 @@ class DiagnosticTests(unittest.TestCase):
     def test_default_context_is_small(self):
         result = self.run_script()
         self.assertEqual(result.returncode, 0, result.stdout)
-        self.assertIn('Sesión declarada: wayland', result.stdout)
-        self.assertIn('Escritorio declarado: KDE', result.stdout)
+        self.assertIn('Reported session: wayland', result.stdout)
+        self.assertIn('Reported desktop: KDE', result.stdout)
         self.assertIn('test-plasma-package', result.stdout)
         self.assertIn('timeout --kill-after=2s 10s', self.calls())
         for command in ('free ', 'lspci ', 'systemctl ', 'systemd-analyze ', 'swapon '):
@@ -140,7 +154,7 @@ class DiagnosticTests(unittest.TestCase):
     def test_remote_connection_values_are_not_disclosed(self):
         self.env['SSH_CONNECTION'] = 'PRIVATE-REMOTE-ADDRESS PRIVATE-PORT'
         result = self.run_script()
-        self.assertIn('Acceso SSH detectado', result.stdout)
+        self.assertIn('SSH access detected', result.stdout)
         self.assertNotIn('PRIVATE-REMOTE-ADDRESS', result.stdout)
         self.assertNotIn('PRIVATE-PORT', result.stdout)
 
@@ -148,22 +162,22 @@ class DiagnosticTests(unittest.TestCase):
         (self.bin / 'rpm').unlink()
         result = self.run_script()
         self.assertEqual(result.returncode, 1)
-        self.assertIn('No disponible: rpm', result.stdout)
+        self.assertIn('Unavailable: rpm', result.stdout)
         self.assertNotIn('dnf', self.calls())
 
     def test_service_query_failure_is_not_reported_as_healthy(self):
         self.mock('systemctl', 'printf "test bus error\\n" >&2\nexit 1\n')
         result = self.run_script('--section', 'security')
         self.assertEqual(result.returncode, 1)
-        self.assertIn('Sin resultado verificable', result.stdout)
-        self.assertIn('salida 1', result.stdout)
+        self.assertIn('No verifiable result', result.stdout)
+        self.assertIn('status 1', result.stdout)
         self.assertNotIn('ActiveState=active', result.stdout)
 
     def test_timeout_is_visible_and_report_is_partial(self):
         self.mock('timeout', 'exit 124\n')
         result = self.run_script()
         self.assertEqual(result.returncode, 1)
-        self.assertIn('salida 124', result.stdout)
+        self.assertIn('status 124', result.stdout)
 
 
 if __name__ == '__main__':

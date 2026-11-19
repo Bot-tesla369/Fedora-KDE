@@ -1,24 +1,24 @@
 ---
 name: fedora-operaciones
-description: "Administrar Fedora: instalaciones RPM o Flatpak, repositorios, actualizaciones, firmware y mantenimiento. Usar para operaciones del sistema verificando primero Fedora tradicional frente a Kinoite/OSTree y el gestor realmente disponible."
+description: "Administer Fedora: RPM or Flatpak installations, repositories, updates, firmware, and maintenance. Use for system operations after verifying traditional Fedora versus Kinoite/OSTree and the package manager actually available."
 ---
 
-# Operaciones de Fedora
+# Fedora operations
 
-## Objetivo y entradas
+## Objective and inputs
 
-Realizar la instalación o mantenimiento solicitado con origen comprobable, verificación y recuperación proporcionada al cambio. Identifica paquete o aplicación, objetivo y restricciones del usuario.
+Perform the requested installation or maintenance with a verifiable source, validation, and recovery appropriate to the change. Identify the package or application, objective, and user constraints.
 
-## Procedimiento
+## Procedure
 
-1. Lee el [protocolo compartido](../fedora-diagnostico/references/contexto-y-fuentes.md). Consulta edición y acceso al host. Distingue Fedora tradicional de Kinoite/OSTree y un contenedor Toolbx; no uses la disponibilidad de `dnf` como única prueba.
-2. En Fedora tradicional, confirma `dnf --version` y `dnf COMANDO --help` antes de elegir sintaxis; DNF4 y DNF5 pueden diferir. En Kinoite, comprueba `rpm-ostree status` y la guía oficial: favorece Flatpak para aplicaciones cuando corresponda y evita instalar en el host con DNF. No automatices rebase, rollback o cambios de despliegue como mantenimiento genérico.
-3. Elige la distribución apropiada: repositorios Fedora para integración nativa o Flatpak del proveedor verificable para aislamiento/distribución. Comprueba nombre real, arquitectura, origen, ámbito de instalación y permisos requeridos. No añadas repositorios externos, claves o permisos amplios sin justificar su necesidad dentro de la tarea. Para Flatpak, distingue instalación de usuario y del sistema.
-4. Antes de una transacción, revisa el resumen y si elimina/reemplaza paquetes o cambia repositorios. No uses `-y` por defecto si oculta esa revisión. Si la resolución sale del objetivo autorizado, detente para explicar el cambio adicional. Una actualización de metadatos o búsqueda remota puede usar red y caché: no la describas como lectura exclusivamente local.
-5. Aplica actualizaciones solo como parte de la petición. `sudo dnf upgrade --refresh` corresponde a Fedora tradicional y actualiza paquetes del sistema; `flatpak update` puede afectar varias aplicaciones. Acota el objetivo cuando sea posible. No limpies cachés ni ejecutes `autoremove` como supuesto acelerador.
-6. Firmware: si existe, `fwupdmgr get-updates` consulta actualizaciones conocidas; refrescar metadatos puede usar red. Antes de actualizar, verifica proveedor, dispositivo compatible, alimentación, instrucciones y necesidad de reinicio. No lo incluyas como optimización rutinaria ni prometas reversión.
-7. Verifica paquete/origen con `rpm -q PAQUETE` o `flatpak info ID` en el ámbito elegido, y prueba la función solicitada. Para servicios utiliza el contexto sistema/usuario correcto. Si hace falta reiniciar, informa y acuerda el momento antes de hacerlo. Documenta la recuperación realmente disponible; desinstalar un paquete no restaura automáticamente sus datos o configuración.
+1. Read the [shared protocol](../fedora-diagnostico/references/contexto-y-fuentes.md). Inspect the edition and host access. Distinguish traditional Fedora from Kinoite/OSTree and a Toolbx container; availability of `dnf` alone is insufficient evidence.
+2. On traditional Fedora, check `dnf --version` and `dnf COMMAND --help` before choosing syntax; DNF4 and DNF5 can differ. On Kinoite, inspect `rpm-ostree status` and the official guide: prefer Flatpak for applications when appropriate and avoid installing on the host with DNF. Do not automate rebases, rollbacks, or deployment changes as generic maintenance.
+3. Choose an appropriate distribution: Fedora repositories for native integration or Flatpak from a verifiable provider for isolation/distribution. Verify the actual name, architecture, source, installation scope, and required permissions. Do not add external repositories, keys, or broad permissions without explaining their necessity within the task. Distinguish user and system Flatpak installations.
+4. Before a transaction, review the summary for package removals/replacements or repository changes. Do not default to `-y` if it hides that review. If dependency resolution exceeds the authorized objective, stop to explain the additional change. Metadata refreshes or remote searches can use network and cache; do not describe them as exclusively local reads.
+5. Apply updates only as part of the request. `sudo dnf upgrade --refresh` applies to traditional Fedora and updates system packages; `flatpak update` can affect multiple applications. Limit the target when possible. Do not clear caches or run `autoremove` as a supposed speed improvement.
+6. For firmware, `fwupdmgr get-updates`, if available, queries known updates; refreshing metadata can use the network. Before updating, verify the vendor, supported device, power supply, instructions, and restart requirements. Do not include firmware updates as routine tuning or promise rollback.
+7. Verify package/source with `rpm -q PACKAGE` or `flatpak info ID` in the chosen scope, then test the requested function. Use the correct system/user context for services. If a restart is necessary, explain it and agree on timing before restarting. Document the recovery actually available; uninstalling a package does not automatically restore its data or configuration.
 
-## Salida y límites
+## Output and limitations
 
-Indica qué cambió, por qué, procedencia, resultado de la prueba y reversión o límite de recuperación. No cambies a otra edición ni instales un escritorio completo para resolver un ajuste puntual. No prometas una versión compatible solo porque el paquete se instaló. Ante un fallo sin causa, continúa con [fedora-diagnostico](../fedora-diagnostico/SKILL.md).
+State what changed, why, its source, test result, and rollback or recovery limits. Do not switch editions or install a full desktop to solve a small setting issue. Successful installation does not prove compatibility. For a failure without an identified cause, continue with [fedora-diagnostico](../fedora-diagnostico/SKILL.md).

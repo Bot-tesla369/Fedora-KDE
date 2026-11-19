@@ -1,0 +1,28 @@
+{
+  "name": "fedora-kde",
+  "version": "2.0.1",
+  "description": "Administer, diagnose, and customize Fedora KDE using local evidence, compatibility checks, and verified changes.",
+  "author": {
+    "name": "Nikola"
+  },
+  "keywords": [
+    "fedora",
+    "kde",
+    "plasma",
+    "wayland",
+    "konsole",
+    "diagnostics",
+    "compatibility",
+    "performance"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Fedora-KDE",
+    "shortDescription": "Evidence-based Fedora and KDE",
+    "longDescription": "Diagnose, administer, secure, tune, and customize Fedora KDE. Inspect the local environment when needed, verify compatibility, and validate changes.",
+    "defaultPrompt": "Handle my Fedora KDE request: inspect only the necessary local context, verify compatibility, and apply the smallest change with validation and rollback. Respond in English unless I request another language.",
+    "developerName": "Nikola",
+    "category": "Productivity",
+    "capabilities": []
+  }
+}

@@ -1,24 +1,24 @@
 ---
 name: kde-wayland-diagnostico
-description: "Diagnosticar fallos de Plasma, KWin y sesiones Wayland/X11 en Fedora: panel, bandeja, plasmoides, sensores, temas, ventanas, efectos, escalado y monitores. Usar para funciones de escritorio que fallan o configuraciones que no se aplican."
+description: "Diagnose Plasma, KWin, and Wayland/X11 session failures on Fedora: panels, tray, plasmoids, sensors, themes, windows, effects, scaling, and monitors. Use for broken desktop functions or settings that do not apply."
 ---
 
-# Diagnóstico del escritorio y gráficos
+# Desktop and graphics diagnostics
 
-## Objetivo y entradas
+## Objective and inputs
 
-Restablecer la función afectada sin reiniciar ni restablecer todo el escritorio por rutina. Identifica síntoma, sesión, componente, cambios recientes y resultado esperado.
+Restore the affected function without routinely restarting or resetting the entire desktop. Identify the symptom, session, component, recent changes, and expected result.
 
-## Procedimiento
+## Procedure
 
-1. Lee el [protocolo compartido](../fedora-diagnostico/references/contexto-y-fuentes.md). Confirma versión de Plasma, sesión real y acceso al escritorio afectado. `--section graphics` del script aporta GPU/controlador y versiones instaladas; no prueba modos de pantalla ni aceleración. Usa `kscreen-doctor -o` si está disponible y solo en la sesión afectada cuando hagan falta esos datos.
-2. Distingue cuatro casos: componente ausente, componente presente sin datos, datos incorrectos y error al representarlos. Comprueba primero ajuste/permiso visible, después fuente de datos, compatibilidad y conflicto con complementos; recoge logs de usuario acotados cuando permitan separar hipótesis. Si hay sospecha de driver/kernel, compruébala en paralelo al nivel gráfico, sin asumir que es un tema visual.
-3. Sensores: distingue `lm_sensors`/`sensors`, proveedor de sensores de Plasma y widget que consume los datos. Instalar `lm_sensors` no crea widgets ni garantiza que Plasma reciba todas las temperaturas. Identifica qué sensor requiere el usuario y si debe verse en panel, bandeja o monitor del sistema.
-4. Panel o widget ausente: comprueba panel/pantalla afectados, modo de edición, lista de widgets, bandeja y paquete del plasmoide. Prueba un componente integrado o desactiva únicamente el complemento sospechoso con forma de restaurarlo. No elimines la configuración global de Plasma ni todo el conjunto de widgets.
-5. Escalado/varios monitores: contrasta modos, frecuencia, escala y conectores con lo admitido por pantalla y driver. Distingue aplicaciones Wayland nativas y XWayland cuando proceda. Usa primero ajustes visuales con posibilidad de revertir; no borres KScreen ni fuerces parámetros globales. Para decoraciones/efectos, comprueba soporte de KWin y versión del complemento.
-6. En fallos tras actualizar, identifica el paquete y contrasta documentación/incidencias de esa versión. Cambiar a X11 no es una solución universal; solo considera una comparación temporal si esa sesión ya existe y aclara qué hipótesis prueba. No instales una sesión alternativa ni mates KWin para una prueba de rutina.
-7. Si la causa apunta a permisos, kernel, drivers, paquetes o servicios base, continúa con [fedora-diagnostico](../fedora-diagnostico/SKILL.md) o [fedora-operaciones](../fedora-operaciones/SKILL.md). Aplica una corrección y verifica el comportamiento exacto; revierte si empeora y evita encadenar ajustes especulativos.
+1. Read the [shared protocol](../fedora-diagnostico/references/contexto-y-fuentes.md). Confirm the Plasma version, actual session, and access to the affected desktop. The script's `--section graphics` provides GPU/driver and installed versions; it does not establish display modes or acceleration. Use `kscreen-doctor -o` if available, only in the affected session when those details are needed.
+2. Distinguish four cases: a missing component, a present component with no data, incorrect data, and rendering errors. First check visible settings/permissions, then the data source, compatibility, and extension conflicts. Collect limited user logs when they distinguish hypotheses. If a driver/kernel issue is suspected, investigate it alongside the graphics layer without assuming a visual theme problem.
+3. For sensors, distinguish `lm_sensors`/`sensors`, the Plasma sensor provider, and the consuming widget. Installing `lm_sensors` neither creates widgets nor guarantees that Plasma receives all temperatures. Identify the required sensor and whether it belongs in a panel, tray, or system monitor.
+4. For missing panels/widgets, check the affected panel/display, edit mode, widget list, tray, and plasmoid package. Test a built-in component or disable only the suspected extension with a restoration path. Do not remove global Plasma configuration or the entire widget set.
+5. For scaling/multiple monitors, compare modes, refresh rates, scales, and connectors against display and driver support. Distinguish native Wayland applications from XWayland when relevant. Start with reversible visual settings; do not delete KScreen configuration or force global parameters. For decorations/effects, check KWin support and the extension version.
+6. For failures after updating, identify the package and review documentation/issues for that version. Switching to X11 is not a universal fix; consider a temporary comparison only if that session already exists and state which hypothesis it tests. Do not install an alternative session or kill KWin for routine testing.
+7. If the cause concerns permissions, kernel, drivers, packages, or base services, continue with [fedora-diagnostico](../fedora-diagnostico/SKILL.md) or [fedora-operaciones](../fedora-operaciones/SKILL.md). Apply one correction and verify the exact behavior; revert if it worsens and avoid speculative chains of changes.
 
-## Salida y límites
+## Output and limitations
 
-Entrega causa o hipótesis con evidencia, prueba discriminante, acción, validación visual/funcional y reversión. No inventes nombres de unidades, claves KConfig, flags o paquetes. Una sesión Wayland puede cerrarse al terminar KWin; no trates su reinicio como una operación inocua.
+Provide the cause or hypothesis with evidence, a discriminating test, action, visual/functional validation, and rollback. Do not invent unit names, KConfig keys, flags, or packages. Terminating KWin may close a Wayland session; do not treat its restart as harmless.

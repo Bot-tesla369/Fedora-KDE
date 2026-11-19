@@ -1,23 +1,23 @@
 ---
 name: fedora-diagnostico
-description: "Diagnosticar y corregir errores de Fedora: inicio, servicios, red, audio, vídeo, suspensión, dispositivos, permisos y compatibilidad. Usar para fallos del sistema; para paneles, ventanas y escalado, consultar kde-wayland-diagnostico del mismo plugin."
+description: "Diagnose and fix Fedora errors involving boot, services, networking, audio, video, suspend, devices, permissions, and compatibility. Use for system failures; for panels, windows, and scaling, consult kde-wayland-diagnostico in this plugin."
 ---
 
-# Diagnóstico de Fedora
+# Fedora diagnostics
 
-## Objetivo y entradas
+## Objective and inputs
 
-Resolver el síntoma con evidencia y una corrección verificable. Recoge error exacto, momento del fallo, acción desencadenante y soluciones ya probadas; pide solo lo que no puedas consultar y que cambie la decisión.
+Resolve the symptom using evidence and a verifiable correction. Gather the exact error, failure time, triggering action, and attempted fixes. Ask only for information you cannot inspect and that changes the decision.
 
-## Procedimiento
+## Procedure
 
-1. Lee el [protocolo compartido](references/contexto-y-fuentes.md). Verifica acceso al host, edición, versión y sesión cuando sean relevantes. Si necesitas un resumen, ejecuta el script descrito allí con la sección correspondiente; no recolectes todas las secciones por rutina.
-2. Elige dos o tres consultas que distingan hipótesis: estado del servicio afectado, paquete y versión, o registro limitado a la unidad y ventana del error. Consulta el journal del usuario para componentes de sesión. No interpretes ausencia de permisos como ausencia de errores.
-3. Separa hardware/driver, red, permiso, aplicación, RPM/Flatpak, servicio y configuración. En audio, consulta `wpctl status` si existe y la salida/fuente seleccionada antes de reinstalar PipeWire. En red, comprueba estado y conectividad pertinentes sin solicitar perfiles, contraseñas ni un volcado de conexiones.
-4. Si el problema es presentación de Plasma, sensores de un widget, ventanas o escalado, continúa con [kde-wayland-diagnostico](../kde-wayland-diagnostico/SKILL.md). Para paquetes o repositorios, usa [fedora-operaciones](../fedora-operaciones/SKILL.md). No abras otra auditoría completa al cambiar de skill.
-5. Contrasta la compatibilidad según el protocolo. Para fallos tras actualizaciones, identifica qué cambió; no recomiendes bajar versiones, cambiar kernel o desactivar protecciones sin evidencia. Una prueba con otro kernel ya instalado debe permitir volver al estado inicial y no implica eliminar el actual.
-6. Aplica la mínima corrección dentro del alcance autorizado, con respaldo si edita archivos. Reproduce la operación original y comprueba el resultado funcional; si persiste, usa el resultado para elegir la siguiente prueba en vez de acumular cambios.
+1. Read the [shared protocol](references/contexto-y-fuentes.md). Verify host access, edition, version, and session when relevant. If a summary is needed, run the script documented there with the appropriate section; do not collect every section routinely.
+2. Choose two or three queries that distinguish hypotheses: affected service status, package and version, or a log limited to the relevant unit and error window. Use the user journal for session components. Do not interpret missing permissions as absence of errors.
+3. Distinguish hardware/driver, networking, permissions, application, RPM/Flatpak, service, and configuration issues. For audio, inspect `wpctl status` if available and the selected output/source before reinstalling PipeWire. For networking, check relevant status and connectivity without requesting profiles, passwords, or a connection dump.
+4. If the problem concerns Plasma presentation, widget sensors, windows, or scaling, continue with [kde-wayland-diagnostico](../kde-wayland-diagnostico/SKILL.md). For packages or repositories, use [fedora-operaciones](../fedora-operaciones/SKILL.md). Do not start another full audit when changing skills.
+5. Verify compatibility using the protocol. For failures following updates, identify what changed; do not recommend downgrades, kernel changes, or disabling protections without evidence. Testing another already-installed kernel must allow returning to the initial state and does not imply removing the current kernel.
+6. Apply the smallest correction within authorized scope, backing up files before edits. Reproduce the original operation and verify the functional result. If the failure persists, use that result to choose the next test instead of accumulating changes.
 
-## Salida y límites
+## Output and limitations
 
-Expón causa respaldada o hipótesis, evidencia, acción, validación y reversión cuando corresponda. Si no hay acceso, entrega comandos pendientes y explica qué resultado decidiría el siguiente paso. No prometas recuperar GRUB, EFI, discos o firmware mediante una receta genérica. No envíes registros o incidencias a terceros sin encargo explícito.
+Report the supported cause or hypothesis, evidence, action, verification, and rollback when applicable. Without access, provide pending commands and explain which result determines the next step. Do not promise GRUB, EFI, disk, or firmware recovery through a generic recipe. Do not send logs or reports to third parties without an explicit request.

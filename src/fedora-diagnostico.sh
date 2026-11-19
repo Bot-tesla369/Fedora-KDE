@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Consultas locales sin sudo, red, instalaciones ni archivos de salida.
+# Local queries without sudo, network access, installations, or output files.
 set -uo pipefail
 export LC_ALL=C
 
 usage() {
   printf '%s\n' \
-    'Uso: bash src/fedora-diagnostico.sh [--section base|graphics|resources|security|all]' \
-    'Sin opciones: base. Cada sección adicional incluye el contexto base.' \
-    'Solo lectura; imprime en stdout. No recopila logs ni busca identificadores personales.' \
-    'Salida 0: consultas realizadas; 1: informe parcial; 2: argumentos incorrectos.'
+    'Usage: bash src/fedora-diagnostico.sh [--section base|graphics|resources|security|all]' \
+    'Default: base. Each additional section includes base context.' \
+    'Read-only; prints to stdout. Does not collect logs or query personal identifiers.' \
+    'Exit 0: queries completed; 1: partial report; 2: invalid arguments.'
 }
 section=base
 if [[ $# -gt 0 ]]; then
@@ -21,32 +21,32 @@ fi
 case "$section" in base|graphics|resources|security|all) ;; *) usage >&2; exit 2 ;; esac
 partial=0
 
-# Las herramientas son opcionales. No convertir errores de bus/permisos en estados sanos.
+# Tools are optional. Do not turn bus/permission errors into healthy states.
 query() {
   local label=$1 output rc
   shift
   printf '\n-- %s --\n' "$label"
   if ! command -v "$1" >/dev/null 2>&1; then
-    printf 'No disponible: %s\n' "$1"
+    printf 'Unavailable: %s\n' "$1"
     partial=1
     return
   fi
   if ! command -v timeout >/dev/null 2>&1; then
-    printf '%s\n' 'No disponible: timeout; consulta omitida para evitar bloqueos.'
+    printf '%s\n' 'Unavailable: timeout; query skipped to avoid blocking.'
     partial=1
     return
   fi
   if output=$(timeout --kill-after=2s 10s "$@" 2>/dev/null); then
-    printf '%s\n' "${output:-Sin salida.}"
+    printf '%s\n' "${output:-No output.}"
   else
     rc=$?
-    printf '%s\n' "${output:-Sin resultado verificable.}"
-    printf 'Consulta con salida %s; revisar antes de interpretar el estado.\n' "$rc"
+    printf '%s\n' "${output:-No verifiable result.}"
+    printf 'Query exited with status %s; review before interpreting the state.\n' "$rc"
     partial=1
   fi
 }
 
-printf '%s\n' '== Fedora-KDE: inspección local de solo lectura =='
+printf '%s\n' '== Fedora-KDE: read-only local inspection =='
 if [[ -r /etc/os-release ]]; then
   while IFS='=' read -r field value; do
     case "$field" in
@@ -54,52 +54,52 @@ if [[ -r /etc/os-release ]]; then
     esac
   done < /etc/os-release
 else
-  printf '%s\n' 'Sistema: no disponible'
+  printf '%s\n' 'System: unavailable'
   partial=1
 fi
 query 'Kernel' uname -r
-query 'Arquitectura' uname -m
-printf '\nSesión declarada: %s\n' "${XDG_SESSION_TYPE:-no disponible}"
-printf 'Escritorio declarado: %s\n' "${XDG_CURRENT_DESKTOP:-no disponible}"
+query 'Architecture' uname -m
+printf '\nReported session: %s\n' "${XDG_SESSION_TYPE:-unavailable}"
+printf 'Reported desktop: %s\n' "${XDG_CURRENT_DESKTOP:-unavailable}"
 if [[ -n ${SSH_CONNECTION:-} || -n ${SSH_TTY:-} ]]; then
-  printf '%s\n' 'Acceso SSH detectado; la sesión consultada puede no ser la sesión gráfica.'
+  printf '%s\n' 'SSH access detected; the queried session may not be the graphical session.'
 fi
 if [[ -e /run/.containerenv || -e /.dockerenv ]]; then
-  printf '%s\n' 'Contenedor detectado; estos datos no describen por completo el host.'
+  printf '%s\n' 'Container detected; these data do not fully describe the host.'
 fi
 if [[ -e /run/ostree-booted ]]; then
-  printf '%s\n' 'Host OSTree detectado; verificar despliegue antes de administrar paquetes.'
+  printf '%s\n' 'OSTree host detected; verify the deployment before administering packages.'
 else
-  printf '%s\n' 'Sin marcador OSTree visible; confirmar edición y acceso al host.'
+  printf '%s\n' 'No visible OSTree marker; confirm the edition and host access.'
 fi
-query 'Versiones RPM instaladas (no prueba de sesión activa)' rpm -q plasma-workspace kwin konsole
+query 'Installed RPM versions (not proof of an active session)' rpm -q plasma-workspace kwin konsole
 
 if [[ $section == graphics || $section == all ]]; then
-  printf '\n%s\n' '== Gráficos =='
-  # Filtra solo GPU y su controlador; no imprime todos los dispositivos PCI.
+  printf '\n%s\n' '== Graphics =='
+  # Filter GPU and its driver only; do not print every PCI device.
   if command -v lspci >/dev/null 2>&1 && command -v awk >/dev/null 2>&1; then
-    query 'GPU/controlador (solo clases de pantalla)' bash -o pipefail -c \
+    query 'GPU/driver (display classes only)' bash -o pipefail -c \
       'lspci -nnk | awk '\''/^[^[:space:]]/ {show=($0 ~ /VGA compatible controller|3D controller|Display controller/)} show {print}'\'''
   else
-    printf '%s\n' 'GPU: no disponible (lspci/awk); no se instala ninguna herramienta.'
+    printf '%s\n' 'GPU: unavailable (lspci/awk); no tools are installed.'
     partial=1
   fi
-  printf '%s\n' 'Para modos/escalado, consultar kscreen-doctor -o solo en la sesión gráfica afectada.'
+  printf '%s\n' 'For modes/scaling, query kscreen-doctor -o only in the affected graphical session.'
 fi
 if [[ $section == resources || $section == all ]]; then
-  printf '\n%s\n' '== Recursos =='
-  query 'Memoria' free -h
-  query 'Swap: tipo/tamaño/uso, sin rutas' swapon --show --output TYPE,SIZE,USED,PRIO
-  query 'Espacio raíz, sin identificador de dispositivo' df -h --output=size,used,avail,pcent /
-  query 'Sistema de archivos raíz' findmnt -n -o FSTYPE /
-  query 'Tiempo de arranque' systemd-analyze time
+  printf '\n%s\n' '== Resources =='
+  query 'Memory' free -h
+  query 'Swap: type/size/usage, without paths' swapon --show --output TYPE,SIZE,USED,PRIO
+  query 'Root space, without device identifiers' df -h --output=size,used,avail,pcent /
+  query 'Root filesystem' findmnt -n -o FSTYPE /
+  query 'Boot time' systemd-analyze time
 fi
 if [[ $section == security || $section == all ]]; then
-  printf '\n%s\n' '== Protección =='
+  printf '\n%s\n' '== Protection =='
   query 'SELinux' getenforce
-  query 'Estado local de firewalld' systemctl show firewalld.service --property=LoadState,ActiveState,SubState,UnitFileState --no-pager
+  query 'Local firewalld status' systemctl show firewalld.service --property=LoadState,ActiveState,SubState,UnitFileState --no-pager
 fi
 printf '\n%s\n' \
-  'Informe sin anonimización universal: las versiones y modelos consultados siguen siendo datos técnicos.' \
-  'No guardarlo en el plugin ni compartirlo sin revisarlo. Datos ausentes no prueban ausencia de fallos.'
+  'This report is not universally anonymized: queried versions and models remain technical information.' \
+  'Do not save this report in the plugin or share it without review. Missing data do not prove absence of faults.'
 exit "$partial"
