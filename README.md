@@ -27,7 +27,7 @@ The optional script requires Bash and common Fedora tools. It uses `timeout` to 
 
 ## 4. Installation and usage
 
-The plugin identity is **`fedora-kde`**, version **2.0.1**. It does not automatically replace `edward-fedora` or `edward-kde`: install this package, verify that its six skills appear, and then remove the old plugins through plugin management if no longer needed.
+The plugin identity is **`fedora-kde`**, version **2.0.2**. It does not automatically replace `edward-fedora` or `edward-kde`: install this package, verify that its six skills appear, and then remove the old plugins through plugin management if no longer needed.
 
 ### Add from GitHub without a password
 
@@ -36,7 +36,7 @@ In **Add plugin marketplace**, use either:
 - Repository shorthand: `Bot-tesla369/Fedora-KDE` (no `.git` suffix).
 - Full clone URL: `https://github.com/Bot-tesla369/Fedora-KDE.git`.
 
-Set the Git reference to `main` and leave sparse paths empty. Do not enter `Bot-tesla369/Fedora-KDE.git` as shorthand: the tested client appends `.git`, producing `Fedora-KDE.git.git` and a GitHub credential prompt. Cancel that prompt and correct the source. This public repository needs no GitHub credentials for cloning. Plugin authentication policy does not control Git clone authentication.
+Set the Git reference to `main` and leave sparse paths empty. Do not enter `Bot-tesla369/Fedora-KDE.git` as shorthand: the tested client appends `.git`, producing `Fedora-KDE.git.git` and a GitHub credential prompt. Cancel that prompt and correct the source. This public repository needs no GitHub credentials for cloning. Plugin authentication policy does not control Git clone authentication. A local Git URL rewrite can map the exact malformed clone URL to the correct public repository; this is a per-machine compatibility workaround, not a change to GitHub authentication.
 
 CLI equivalent:
 
@@ -45,7 +45,7 @@ codex plugin marketplace add https://github.com/Bot-tesla369/Fedora-KDE.git --re
 codex plugin add fedora-kde@fedora-kde-marketplace
 ```
 
-For local installation, add the checked-out repository folder as the marketplace source. The catalog is at `.agents/plugins/marketplace.json`; its `./` source resolves to the repository root. The native Codex manifest is `.codex-plugin/plugin.json`, with an Agent Plugins 1.0 manifest at `plugin.json`.
+For local installation, add the checked-out repository folder as the marketplace source. The catalog is at `.agents/plugins/marketplace.json`; its `./` source resolves to the repository root. The native Codex manifest is `.codex-plugin/plugin.json`, with an Agent Plugins 1.0 manifest at `plugin.json`. The generic manifest omits the optional remote `$schema` declaration so editors do not depend on an external schema download; package checks and a native Codex installation validate the package locally.
 
 Example requests:
 

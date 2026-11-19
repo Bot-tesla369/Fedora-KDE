@@ -1,7 +1,6 @@
 {
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fedora-kde",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Administer, diagnose, and customize Fedora KDE using local evidence, compatibility checks, and verified changes.",
   "author": {
     "name": "Nikola"
