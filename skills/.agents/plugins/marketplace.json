@@ -1,7 +1,7 @@
 {
   "name": "fedora-kde-marketplace",
   "interface": {
-    "displayName": "Fedora KDE Marketplace"
+    "displayName": "Fedora-KDE"
   },
   "plugins": [
     {
